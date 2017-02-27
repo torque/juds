@@ -16,36 +16,18 @@ NATIVELIB=libunixdomainsocket
 LIBEXT=@LIBEXT@
 INCLUDEPATH = -I $(JAVA_HOME)/include -I $(JAVA_HOME)/include/$(PLATFORM)
 
-LIB32=$(NATIVELIB)-$(PLATFORM)-i386.$(LIBEXT)
-LIB64=$(NATIVELIB)-$(PLATFORM)-x86_64.$(LIBEXT)
-M32=@M32@
-M64=@M64@
+LIB=$(NATIVELIB).$(LIBEXT)
 JARFILE=juds-$(VERSION).jar
-UNIJARFILE=juds-$(VERSION)-universal.jar
 
-all: jar 
+all: jar
 
 jar: $(JARFILE)
 
-# requires that the binaries from other platforms are copied here. 
-universal: jar
-	cp $(JARFILE) $(UNIJARFILE)
-	$(JAR) uf $(UNIJARFILE) $(NATIVELIB)-darwin-i386.dylib $(NATIVELIB)-darwin-x86_64.dylib $(NATIVELIB)-linux-x86_64.so $(NATIVELIB)-linux-i386.so
-
-package: universal
-	mkdir juds-$(VERSION)-universal
-	cp $(UNIJARFILE) juds-$(VERSION)-universal
-	cp README.md juds-$(VERSION)-universal
-	cp COPYRIGHT juds-$(VERSION)-universal
-	tar pczf juds-$(VERSION)-universal.tar.gz juds-$(VERSION)-universal
-	rm -rf juds-$(VERSION)-universal
-
 juds-$(VERSION).jar: $(PACKAGE_DIR)/UnixDomainSocket.class $(PACKAGE_DIR)/UnixDomainSocketClient.class $(PACKAGE_DIR)/UnixDomainSocketServer.class nativelib $(PACKAGE_DIR)/JUDS.class
-	$(JAR) cf $@ $(PACKAGE_DIR)/*.class $(LIB64) $(LIB32)
+	$(JAR) cf $@ $(PACKAGE_DIR)/*.class $(LIB)
 
 nativelib: $(PACKAGE_DIR)/UnixDomainSocket.c $(PACKAGE_DIR)/UnixDomainSocket.h
-	$(CC) $(CFLAGS) -fPIC $(INCLUDEPATH) $(M32) -o $(LIB32) $< 
-	$(CC) $(CFLAGS) -fPIC $(INCLUDEPATH) $(M64) -o $(LIB64) $< 
+	$(CC) $(CFLAGS) -fPIC $(INCLUDEPATH) -o $(LIB) $<
 
 $(PACKAGE_DIR)/UnixDomainSocket.h: $(PACKAGE).UnixDomainSocket
 	$(JAVAH) -o $@ $<
@@ -65,10 +47,10 @@ $(PACKAGE_DIR)/UnixDomainSocketServer.class: $(PACKAGE_DIR)/UnixDomainSocketServ
 	$(JAVAC) $(JAVA_FLAGS) $?
 
 install: nativelib
-	cp $(LIB32) $(LIB64) $(PREFIX)/lib
+	cp $(LIB) $(PREFIX)/lib
 
 uninstall:
-	rm -f $(PREFIX)/lib/$(LIB32) $(PREFIX)/lib/$(LIB64)
+	rm -f $(PREFIX)/lib/$(LIB)
 
 test: test/TestUnixDomainSocket.class test/TestUnixDomainSocketServer.class
 	python test/TestUnixDomainSocket.py $(TEST_SOCKET_FILE) &

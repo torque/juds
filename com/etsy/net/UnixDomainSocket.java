@@ -17,10 +17,10 @@ import java.net.URISyntaxException;
 
 
 /**
- * 
+ *
  * This class provides a means of using Unix domain socket client/server
  * connections in Java
- * 
+ *
  * @author Klaus Trainer
  */
 public abstract class UnixDomainSocket {
@@ -68,13 +68,13 @@ public abstract class UnixDomainSocket {
         } catch(IOException e) {
             throwLink(e);
         }
-        System.load(path); 
+        System.load(path);
     }
 
     private static Boolean jarNewer(File lib) {
         return lib.lastModified() < jarFile.lastModified();
     }
-    
+
     private static void throwLink(Throwable e) {
         throwLink(e.toString());
     }
@@ -108,7 +108,7 @@ public abstract class UnixDomainSocket {
             tmpdir.deleteOnExit();
         }
 
-        String path = String.format("libunixdomainsocket-%s-%s.%s", p, arch(), ext);
+        String path = String.format("libunixdomainsocket.%s", ext);
         File lib = new File(tmpdir, path);
         if (preferred == null) {
             lib.deleteOnExit();
@@ -116,7 +116,7 @@ public abstract class UnixDomainSocket {
         return lib;
     }
 
-    private static void extractNativeLib(File target) 
+    private static void extractNativeLib(File target)
         throws IOException, URISyntaxException {
 
         InputStream in;
@@ -155,14 +155,6 @@ public abstract class UnixDomainSocket {
         }
     }
 
-    private static String arch() {
-        String a = System.getProperty("os.arch");
-        if("amd64".equals(a) || "x86_64".equals(a)) {
-            return "x86_64";
-        }
-        return a;
-    }
-
     private static String platform() {
         String p = System.getProperty("os.name").toLowerCase();
         if("mac os x".equals(p)) {
@@ -185,11 +177,11 @@ public abstract class UnixDomainSocket {
     private int timeout;
 
     // Native methods implemented in the Unix domain socket C library
-        protected native static int nativeCreate(String socketFile, int socketType);
-        
-        protected native static int nativeListen(String socketFile, int socketType, int backlog);
+    protected native static int nativeCreate(String socketFile, int socketType);
 
-        protected native static int nativeAccept(int nativeSocketFileHandle, int socketType);
+    protected native static int nativeListen(String socketFile, int socketType, int backlog);
+
+    protected native static int nativeAccept(int nativeSocketFileHandle, int socketType);
 
     protected native static int nativeOpen(String socketFile, int socketType);
 
@@ -217,7 +209,7 @@ public abstract class UnixDomainSocket {
     protected UnixDomainSocket(int pSocketFileHandle, int pSocketType)
     throws IOException
     {
-    nativeSocketFileHandle = pSocketFileHandle;    
+    nativeSocketFileHandle = pSocketFileHandle;
     socketType = pSocketType;
     socketFile = null;
 
@@ -229,7 +221,7 @@ public abstract class UnixDomainSocket {
     }
     /**
      * Returns an input stream for this socket.
-     * 
+     *
      * @return An input stream for reading bytes from this socket
      */
     public InputStream getInputStream() {
@@ -238,7 +230,7 @@ public abstract class UnixDomainSocket {
 
     /**
      * Returns an output stream for this socket.
-     * 
+     *
      * @return An output stream for writing bytes to this socket
      */
     public OutputStream getOutputStream() {
@@ -250,7 +242,7 @@ public abstract class UnixDomainSocket {
      * specified amount of time it will be cancelled, and a
      * java.io.InterruptedIOException will be thrown. A <code>timeout</code>
      * of zero is interpreted as an infinite timeout.
-     * 
+     *
      * @param timeout
      *            The specified timeout, in milliseconds.
      */
