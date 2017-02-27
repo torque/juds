@@ -1,9 +1,17 @@
+#### Compilation
+
+macOS:
+```
+JAVA_HOME=/usr CFLAGS="-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers/" ./configure
+```
+edison:
+```
+JAVA_HOME=/usr/lib/jvm/java-8-openjdk ./configure
+```
+
+
 JUDS
 ====
-
-<a href="https://travis-ci.org/mcfunley/juds">
-  <img src="https://api.travis-ci.org/mcfunley/juds.svg" alt="Build Status">
-</a>
 
 ABSTRACT
 --------
